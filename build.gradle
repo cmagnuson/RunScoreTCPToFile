@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin:'application'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
 
 mainClassName = 'Driver'
 
@@ -14,4 +16,13 @@ repositories {
 
 dependencies {
 	compile 'com.google.guava:guava:19.0'
+}
+
+findbugs {
+    ignoreFailures = true
+}
+
+pmd {
+     ruleSets = ["java-basic", "java-braces", "java-design"]
+     ignoreFailures = true
 }
