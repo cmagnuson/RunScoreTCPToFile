@@ -1,0 +1,8 @@
+TODO:
+-default save folder - up two directories, or prompt for or ...?
+
+Done 1.1:
+-create blank file on connect to location
+-add default log format - timestamp it
+-log message on initial connect from location
+-check file locking with RS - retry write on failure
