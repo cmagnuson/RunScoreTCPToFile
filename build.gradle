@@ -1,6 +1,5 @@
 apply plugin: 'java'
 apply plugin:'application'
-apply plugin: 'distribution'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
 
