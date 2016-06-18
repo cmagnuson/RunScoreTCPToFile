@@ -1,6 +1,5 @@
 buildscript {
-
-    repositories {
+   repositories {
         jcenter()
     }
 
@@ -10,7 +9,6 @@ buildscript {
         // build script.
         classpath 'org.ajoberstar:grgit:1.1.0'
     }
-
 }
 
 apply plugin: 'java'
