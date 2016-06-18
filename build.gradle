@@ -1,11 +1,35 @@
+buildscript {
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        // Add dependency for build script,
+        // so we can access Git from our
+        // build script.
+        classpath 'org.ajoberstar:grgit:1.1.0'
+    }
+
+}
+
 apply plugin: 'java'
 apply plugin:'application'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
 
-mainClassName = 'Driver'
+ext {
+	// Open the Git repository in the current directory.
+	git = org.ajoberstar.grgit.Grgit.open(file('.'))
 
-project.version = "1.1"
+	// Get commit id of HEAD.
+	revision = git.head().id
+	// Alternative is using abbreviatedId of head() method.
+	// revision = git.head().abbreviatedId
+}
+
+mainClassName = 'Driver'
+project.version = "1.1.${git.head().abbreviatedId}"
 
 sourceCompatibility=1.8
 targetCompatibility=1.8
@@ -17,6 +41,30 @@ repositories {
 dependencies {
 	compile 'com.google.guava:guava:19.0'
 }
+
+// Customize applicationDistribution
+// CopySpec from application plugin extension.
+applicationDistribution.with {
+	from('src/dist') {
+		include 'VERSION'
+		expand(
+			buildDate: new Date(),
+			// Use revision with Git commit id:
+			revision : revision,
+			version  : project.version,
+			appName  : applicationName)
+	}
+}
+
+// Contents for src/dist/VERSION:
+/*
+Version: ${version}
+Revision: ${revision}
+Build-date: ${buildDate.format('dd-MM-yyyy HH:mm:ss')}
+Application-name: ${appName}
+*/
+
+assemble.dependsOn installDist
 
 findbugs {
     ignoreFailures = true
