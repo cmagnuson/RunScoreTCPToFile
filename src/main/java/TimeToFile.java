@@ -11,9 +11,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.mtecresults.mylapstcpserver.controller.MyLapsTCPServer;
+import com.mtecresults.mylapstcpserver.controller.ServerDataHandler;
+import com.mtecresults.mylapstcpserver.domain.Passing;
 
 
-public class TimeToFile implements Runnable {
+public class TimeToFile extends ServerDataHandler implements Runnable {
 
 	private final ArrayBlockingQueue<ChipTime> toProcess = new ArrayBlockingQueue<ChipTime>(10000000);
 
@@ -25,10 +28,6 @@ public class TimeToFile implements Runnable {
 
 	public boolean addTimes(Collection<ChipTime> times){
 		return toProcess.addAll(times);
-	}
-
-	public boolean addLocation(String location){
-		return toProcessLocation.add(location);
 	}
 
 	@Override
@@ -85,5 +84,24 @@ public class TimeToFile implements Runnable {
 			log.log(Level.SEVERE, "Error writing times to file for location: "+filename, io);
 			return false;
 		}
+	}
+
+	@Override
+	public void handlePassings(Collection<Passing> passings) {
+		List<ChipTime> chips = new ArrayList(passings.size());
+		for(Passing p: passings){
+			chips.add(ChipTime.fromPassing(p));
+		}
+		addTimes(chips);
+	}
+
+	@Override
+	public String getServerName() {
+		return "Mtec-TCP-ToFile";
+	}
+
+	@Override
+	public int getServerPort() {
+		return 3097;
 	}
 }
